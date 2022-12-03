@@ -1,0 +1,66 @@
+{
+  "name": "frontend-viengmo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build --mode production",
+    "lint": "vue-cli-service lint",
+    "deploy": "vue-cli-service s3-deploy"
+  },
+  "dependencies": {
+    "@vue/composition-api": "^1.4.9",
+    "apexcharts": "^3.33.2",
+    "autoprefixer": "^10",
+    "axios": "^0.26.0",
+    "core-js": "^3.8.3",
+    "mapbox-gl": "^2.7.0",
+    "postcss": "^8",
+    "s3-deploy": "^1.4.0",
+    "tailwindcss": "^3",
+    "v-viewer": "^1.6.4",
+    "vue": "^2.6.14",
+    "vue-apexcharts": "^1.6.2",
+    "vue-cli-plugin-s3-deploy": "^4.0.0-rc3",
+    "vue-i18n": "^8.27.1",
+    "vue-json-csv": "1.2.12",
+    "vue-markdown": "^2.2.4",
+    "vue-picture-swipe": "^2.1.0",
+    "vue-router": "^3.5.1",
+    "vuetify": "^2.6.0",
+    "vuex": "^3.6.2",
+    "xlsx": "^0.18.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@iconify/vue2": "^1.2.0",
+    "@intlify/vue-i18n-loader": "^1.1.0",
+    "@vue/cli-plugin-babel": "^5.0.0",
+    "@vue/cli-plugin-eslint": "^5.0.0",
+    "@vue/cli-service": "^5.0.0",
+    "@vue/eslint-config-airbnb": "^6.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-vue": "^8.0.3",
+    "eslint-plugin-vuejs-accessibility": "^1.1.0",
+    "lint-staged": "^11.1.2",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-tailwind": "~3.0.0",
+    "vue-cli-plugin-vuetify": "^2.4.7",
+    "vue-template-compiler": "^2.6.14",
+    "vuetify-loader": "^1.7.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "semi": true
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue}": "vue-cli-service lint"
+  }
+}
