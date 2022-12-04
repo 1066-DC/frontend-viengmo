@@ -3,7 +3,7 @@ import {
 } from '@vue/composition-api';
 import mapboxgl from 'mapbox-gl';
 import {
-  VILLAGES_LAYER, VILLAGES_SOURCE
+  BUILDINGS_LAYER, BUILDINGS_SOURCE
 } from '@/helpers';
 import router from '@/router';
 
@@ -34,7 +34,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
 
     mapPromise.value.then((map) => {
 
-      map.addSource(VILLAGES_SOURCE, {
+      map.addSource(BUILDINGS_SOURCE, {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
@@ -43,31 +43,31 @@ export const useMap = (buildings, building_id, initialZoom) => {
       });
 
       map.addLayer({
-        id: VILLAGES_LAYER,
+        id: BUILDINGS_LAYER,
         type: 'circle',
-        source: VILLAGES_SOURCE,
+        source: BUILDINGS_SOURCE,
         minzoom: 6,
         paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 4, 11, 10],
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 4, 11, 6],
           'circle-color': '#2FB459',
           'circle-stroke-color': 'black',
           'circle-stroke-width': 1,
         },
       });
 
-      map.on('mouseenter', VILLAGES_LAYER, () => {
+      map.on('mouseenter', BUILDINGS_LAYER, () => {
         map.getCanvas().style.cursor = 'pointer';
       });
 
-      map.on('mouseleave', VILLAGES_LAYER, () => {
+      map.on('mouseleave', BUILDINGS_LAYER, () => {
         map.getCanvas().style.cursor = '';
       });
 
-      map.on('click', VILLAGES_LAYER, (e) => {
+      map.on('click', BUILDINGS_LAYER, (e) => {
         if (!e.originalEvent.defaultPrevented) {
           const building = e.features[0].properties;
           router.push({
-            name: 'analytics',
+            name: 'building',
             params: { id: building.id },
           }).catch(() => { });
           const coordinates = e.lngLat.wrap();
@@ -97,11 +97,12 @@ export const useMap = (buildings, building_id, initialZoom) => {
     if (!mapPromise.value) {
       return;
     }
-    const filterValue = String(building_id);
+    const filterValue = Number(building_id.value);
+
     mapPromise.value.then((map) => {
-      map.setPaintProperty(VILLAGES_LAYER, 'circle-color', [
+      map.setPaintProperty(BUILDINGS_LAYER, 'circle-color', [
         'case',
-        ['==', ['get', 'building_id'], filterValue.substring(0, 7)],
+        ['==', ['get', 'id'], filterValue],
         '#ff0000',
         '#2FB459',
       ]);
@@ -114,7 +115,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
       return;
     }
     mapPromise.value.then((map) => {
-      const buildingSource = map.getSource(VILLAGES_SOURCE);
+      const buildingSource = map.getSource(BUILDINGS_SOURCE);
       if (!buildingSource) {
         return;
       }
@@ -125,7 +126,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
           properties: v,
           geometry: {
             type: 'Point',
-            coordinates: [v.latitude, v.longitude],
+            coordinates: [v.longitude, v.latitude],
           },
         })),
       });
@@ -147,8 +148,8 @@ export const useMap = (buildings, building_id, initialZoom) => {
     setBuildings();
   });
 
-  watch(location, () => {
-    focusMap();
+  watch(building_id, () => {
+    setStyle();
   });
 
   onMounted(() => setMap());

@@ -77,8 +77,8 @@ export const getChildGranularity = (granularity) => {
 
 
 export const DISTRICTS_LAYER = 'districts';
-export const VILLAGES_LAYER = 'villages';
-export const VILLAGES_SOURCE = 'villages';
+export const BUILDINGS_LAYER = 'buildings';
+export const BUILDINGS_SOURCE = 'buildings';
 export const DISTRICTS_OUTLINE_LAYER = 'districts-outline';
 export const PROVINCES_LAYER = 'provinces';
 export const PROVINCES_OUTLINE_LAYER = 'provinces-outline';

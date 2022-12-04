@@ -1,5 +1,5 @@
 <template>
-  <div class="border drop-shadow-md rounded-md ma-2 pa-4">
+  <div class="my-2">
     <slot></slot>
   </div>
 </template>

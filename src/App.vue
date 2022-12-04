@@ -1,10 +1,11 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" :height="100" flat>
+    <v-app-bar app color="primary" :height="100" flat class="container mx-auto mb-2">
       <div class="cursor-pointer">
         <v-img
           contain
           class="nav-logo"
+          position="left"
           :src="require('@/assets/logo2.jpg')"
           transition="scale-transition"
           @click="goToHome"
@@ -15,7 +16,7 @@
         {{ location }}
       </div>
       <v-spacer></v-spacer>
-      <v-menu>
+      <v-menu v-if="false">
         <template v-slot:activator="{ on, attrs }">
           <v-btn depressed rounded v-bind="attrs" color="transparent" v-on="on">
             <v-img class="pa-2" width="32px" :src="getImgUrl($i18n.locale)" />
@@ -48,7 +49,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main class="bg-neutral-200">
+    <v-main class="bg-primary">
       <router-view :buildings="buildings" @location="updateLocation" />
     </v-main>
   </v-app>
@@ -75,7 +76,14 @@ export default {
       id: x.id,
       longitude: x.attributes.longitude,
       latitude: x.attributes.latitude,
+      name: x.attributes.name,
+      thumbnail: x.attributes.front.data.attributes.formats.thumbnail.url
     }));
+
+    this.buildings.forEach(b => {
+      document.createElement('img').setAttribute('src', b.thumbnail);
+    })
+
   },
   methods: {
     goToHome() {
@@ -95,6 +103,10 @@ export default {
 </script>
 
 <style>
+.v-toolbar__content {
+  padding: 0px !important;
+}
+
 .nav-logo {
   height: 100px;
 }

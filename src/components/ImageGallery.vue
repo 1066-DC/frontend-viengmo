@@ -1,9 +1,10 @@
 <template>
   <div class="image-gallery">
+    <h1>Pictures </h1>
     <v-carousel v-model="carouselIdx" v-if="mediasList.length">
-      <v-carousel-item v-for="(media, idx) in mediasList" :key="idx">
+      <v-carousel-item v-for="(media, idx) in mediasList" :key="idx" eager>
         <div class="carousel-img-container">
-          <v-img class="carousel-img" :src="media.src" />
+          <v-img class="carousel-img" :src="media.src" eager/>
           <div class="mt-2">
             <p>{{ media.caption }}</p>
             <p></p>
@@ -16,8 +17,8 @@
       <v-dialog v-model="galleryDialog" width="2000" scrollable>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            color="red lighten-2"
-            dark
+            tile
+            color="secondary"
             v-bind="attrs"
             v-on="on"
             class="ma-4"

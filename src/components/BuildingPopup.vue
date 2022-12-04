@@ -1,26 +1,10 @@
 <template>
-  <v-card class="mx-auto cardColor">
+  <v-card class="mx-auto cardColor building-popup">
     <v-card-title>
-      <h3>{{ village.name_en }}/{{ village.name_la }}</h3></v-card-title
+      <h3>{{ building.name }}</h3></v-card-title
     >
-    <v-card-subtitle>
-      <h4>
-        {{ village.district_name_en }}
-      </h4>
-      <h4>
-        {{ village.province_name_en }}
-      </h4>
-    </v-card-subtitle>
     <v-card-text class="d-flex flex-column align-start">
-      <div
-        class="mr-2 flex align-center text-lg"
-        v-for="col in columns"
-        :key="col.key"
-      >
-        <BaseIcon :icon="col.icon" class="mr-2" />
-        <span class="font-weight-bold mr-2">{{ col.label }}</span>
-        <span class="font-weight-bold">{{ village[col.key] }}</span>
-      </div>
+      <v-img :src="building.thumbnail" />
     </v-card-text>
   </v-card>
 </template>
@@ -56,7 +40,7 @@
 import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'VillagePopup',
+  name: 'BuildingPopup',
   computed: {
     columns() {
       return [
@@ -92,6 +76,10 @@ export default defineComponent({
 </script>
 
 <style>
+.building-popup {
+  min-height: 190px;
+}
+
 .cardColor {
   background-color: rgba(255, 255, 255, 0.9) !important;
   border-color: white !important;

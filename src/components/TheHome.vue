@@ -2,14 +2,10 @@
   <div class="container mx-auto">
     <div class="flex flex-col">
       <MapView
-        class="ma-2 pa-1"
-        :villages="villages"
-        :granularity="granularity"
-        :value="value"
-        :provinces="provincesList"
-        :districts="districtsList"
+        class="my-2"
+        :buildings="buildings"
       />
-      <BaseBox class="flex flex-column bg-white">
+      <BaseBox class="flex flex-column bg-white" v-if="false">
         <div class="flex justify-between">
           <BaseTitle>{{ $t('projects_list') }}</BaseTitle>
         </div>
@@ -37,11 +33,11 @@
           ></v-select>
           <v-select
             class="mx-2 h-14"
-            :label="$t('village')"
-            :items="villagesList"
+            :label="$t('building')"
+            :items="buildings"
             item-value="id"
             item-text="name_en"
-            v-model="selectedVillage"
+            v-model="selectedBuilding"
             clearable
             outlined
           ></v-select>
@@ -75,7 +71,7 @@
     "name": "Name",
     "province": "Province",
     "district": "District",
-    "village": "Village",
+    "building": "Building",
     "project-type": "Project type",
     "projects_list": "Projects list"
   },
@@ -84,7 +80,7 @@
     "name": "ຊື່",
     "province": "ແຂວງ",
     "district": "ເມືອງ",
-    "village": "ບ້ານ",
+    "building": "ບ້ານ",
     "project-type": "ປະເພດໂຄງການ",
     "projects_list": "ບັນຊີລາຍຊື່ໂຄງການ"
   }
@@ -102,13 +98,7 @@ export default {
     MapView,
   },
   props: {
-    granularity: {
-      type: String,
-    },
-    value: {
-      type: String,
-    },
-    villages: {
+    buildings: {
       type: Array,
       default() {
         return [];
@@ -125,7 +115,7 @@ export default {
       name: '',
       selectedProvince: null,
       selectedDistrict: null,
-      selectedVillage: null,
+      selectedBuilding: null,
       selectedProjectType: null,
     };
   },
@@ -152,8 +142,8 @@ export default {
           label: this.$t('district'),
         },
         {
-          key: `village_${this.label}`,
-          label: this.$t('village'),
+          key: `building_${this.label}`,
+          label: this.$t('building'),
         },
       ];
     },
@@ -168,18 +158,6 @@ export default {
         );
       }
       return districts;
-    },
-    villagesList() {
-      const villages = this.districtsList
-        .map((x) => x.Villages)
-        .flat()
-        .sort((a, b) => a.name_en.localeCompare(b.name_en));
-      if (this.selectedDistrict) {
-        return villages.filter(
-          (x) => String(x.district_id) === this.selectedDistrict,
-        );
-      }
-      return villages;
     },
     projectTypes() {
       return [
@@ -198,10 +176,10 @@ export default {
       ];
     },
     location() {
-      if (this.selectedVillage !== null) {
+      if (this.selectedBuilding !== null) {
         return {
-          granularity: 'village',
-          value: this.selectedVillage,
+          granularity: 'building',
+          value: this.selectedBuilding,
         };
       }
       if (this.selectedDistrict !== null) {
@@ -240,7 +218,7 @@ export default {
       if (this.granularity === 'province') {
         this.selectedProvince = this.value;
         this.selectedDistrict = null;
-        this.selectedVillage = null;
+        this.selectedBuilding = null;
       }
       if (this.granularity === 'district') {
         this.selectedDistrict = this.value;
@@ -274,13 +252,6 @@ export default {
       this.page = this.page + 1;
       this.getProjects();
     },
-  },
-  async mounted() {
-    this.$emit('location', '');
-    this.provincesList = (await MainService.getProvinces()).data.sort((a, b) =>
-      a.name_en.localeCompare(b.name_en),
-    );
-    this.getProjects();
   },
 };
 </script>

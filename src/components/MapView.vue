@@ -3,109 +3,23 @@
     <div id="map"></div>
     <div
       class="flex flex-column pa-4 align-center bg-white justify-around"
-      id="analytics"
+      v-if="false"
     >
       <BaseTitle>
-        {{ this.display | capitalizeFirst }}
+        Buildings
       </BaseTitle>
-      <BaseButton
-        icon="arrow-right-bold"
-        :light="true"
-        :small="false"
-        @click="goToAnalytics"
-      >
-        <span>{{ $t('analytics') }}</span>
-      </BaseButton>
 
       <BaseBox class="flex flex-column bg-neutral-200 w-full flex-initial">
-        <BaseTitle :subtitle="true">{{ $t('farmer-groups') }}</BaseTitle>
+        <BaseTitle :subtitle="true">Mapped</BaseTitle>
         <div class="flex flex-initial">
           <BaseMetric
-            :label="$t('number-of-groups')"
-            :value="
-              formatNumber(
-                analyticsData
-                  .map((d) =>
-                    Number(d.number_of_groups ? d.number_of_groups : 0),
-                  )
-                  .reduce((acc, a) => acc + a, 0),
-                0,
-              )
-            "
-            icon="home"
-          />
-          <BaseMetric
-            :label="$t('total_group_members')"
-            :value="
-              formatNumber(
-                analyticsData
-                  .map((d) =>
-                    Number(d.number_of_members ? d.number_of_members : 0),
-                  )
-                  .reduce((acc, a) => acc + a, 0),
-                0,
-              )
-            "
-            icon="crowd"
-          />
-        </div>
-        <div class="flex flex-initial">
-          <BaseMetric
-            :label="$t('total_area_cultivated')"
+            label="Number"
             icon="tractor"
-            :value="`${formatNumber(
-              analyticsData
-                .map((d) =>
-                  Number(d.cultivated_land_area ? d.cultivated_land_area : 0),
-                )
-                .reduce((acc, a) => acc + a, 0),
-              0,
-            )} ha`"
+            :value="10"
           />
         </div>
       </BaseBox>
-      <BaseBox class="flex flex-column bg-neutral-200 w-full flex-initial">
-        <BaseTitle :subtitle="true">{{ $t('agri-businesses') }}</BaseTitle>
-        <div class="flex flex-initial">
-          <BaseMetric
-            :label="$t('number_of_businesses')"
-            :value="
-              formatNumber(
-                analyticsData
-                  .map((d) =>
-                    Number(d.number_of_businesses ? d.number_of_businesses : 0),
-                  )
-                  .reduce((acc, a) => acc + a, 0),
-                0,
-              )
-            "
-            icon="handshake-outline"
-          />
-        </div>
-      </BaseBox>
-      <BaseBox class="flex flex-column bg-neutral-200 w-full flex-initial">
-        <BaseTitle :subtitle="true">{{ $t('irrigation_schemes') }}</BaseTitle>
-        <div class="flex flex-initial">
-          <BaseMetric
-            :label="$t('number_of_projects')"
-            :value="
-              formatNumber(
-                analyticsData
-                  .map((d) =>
-                    Number(
-                      d.number_of_irrigation_scheme
-                        ? d.number_of_irrigation_scheme
-                        : 0,
-                    ),
-                  )
-                  .reduce((acc, a) => acc + a, 0),
-                0,
-              )
-            "
-            icon="waves"
-          />
-        </div>
-      </BaseBox>
+
     </div>
   </div>
 </template>
@@ -149,7 +63,7 @@ import {
 } from '@vue/composition-api';
 // import MainService from '@/services/MainService.js';
 import mapboxgl from 'mapbox-gl';
-import VillagePopup from '@/components/VillagePopup.vue';
+import BuildingPopup from '@/components/BuildingPopup.vue';
 import router from '@/router';
 import { formatNumber } from '@/helpers';
 import { useMap } from '@/hooks/useMap.js';
@@ -161,25 +75,7 @@ export default defineComponent({
     capitalizeFirst,
   },
   props: {
-    granularity: {
-      type: String,
-    },
-    value: {
-      type: String,
-    },
-    provinces: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    districts: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    villages: {
+    buildings: {
       type: Array,
       default() {
         return [];
@@ -190,61 +86,27 @@ export default defineComponent({
     label() {
       return this.$i18n.locale === 'la' ? 'name_la' : 'name_en';
     },
-    display() {
-      if (this.granularity === 'country') {
-        return this.$i18n.locale === 'la' ? 'ໂຄງການ' : 'Project';
-      }
-      const element = [...this.provinces, ...this.districts].find(
-        (p) => p.id === this.value,
-      );
-      if (element) {
-        return element[this.label];
-      }
-      return '';
-    },
-    analyticsData() {
-      if (this.value === 'laos') {
-        return this.villages;
-      }
-      return this.villages.filter(
-        (v) => v[`${this.granularity}_id`] === this.value,
-      );
-    },
   },
   methods: {
     formatNumber,
     goToAnalytics() {
       router.push({
-        name: 'analytics',
+        name: 'building',
         params: {
-          granularity: this.granularity,
-          value: this.value,
-          projectType: 'all',
+          id: 1,
         },
       });
     },
   },
   setup(props) {
     const { mapPromise } = useMap(
-      toRef(props, 'granularity'),
-      toRef(props, 'value'),
-      toRef(props, 'villages'),
-      6,
+      toRef(props, 'buildings'),
+      null,
+      12,
     );
 
     watch(mapPromise, (mapPromise) => {
       mapPromise.then((map) => {
-        map.addLayer({
-          id: 'markers',
-          type: 'circle',
-          source: 'markers',
-          paint: {
-            'circle-color': '#ff0000',
-            'circle-stroke-width': 1.5,
-            'circle-stroke-color': 'black',
-            'circle-radius': 8,
-          },
-        });
 
         const popup = new mapboxgl.Popup({
           closeButton: false,
@@ -253,9 +115,9 @@ export default defineComponent({
           anchor: 'left',
         });
 
-        map.on('mouseenter', 'villages', (e) => {
+        map.on('mouseenter', 'buildings', (e) => {
           const coordinates = e.features[0].geometry.coordinates.slice();
-          const village = e.features[0].properties;
+          const building = e.features[0].properties;
 
           while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -267,9 +129,9 @@ export default defineComponent({
             .addTo(map);
 
           const popupContent = defineComponent({
-            extends: VillagePopup,
+            extends: BuildingPopup,
             setup() {
-              return { village };
+              return { building };
             },
           });
 
@@ -278,7 +140,7 @@ export default defineComponent({
           });
         });
 
-        map.on('mouseleave', 'villages', () => {
+        map.on('mouseleave', 'buildings', () => {
           popup.remove();
         });
       });

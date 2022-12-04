@@ -5,7 +5,7 @@ export default {
     return Api().get(`buildings/${id}?populate=deep`);
   },
   getBuildingLocations() {
-    return Api().get(`buildings/?fields[0]=longitude&fields[1]=latitude`);
+    return Api().get(`buildings?fields[0]=longitude&fields[1]=latitude&fields[2]=name&populate[0]=front`);
   },
   getBreadCrumbs(granularity, value, projectType) {
     return Api().get(`data/${granularity}/${value}/${projectType}`);
