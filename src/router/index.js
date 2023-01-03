@@ -7,14 +7,6 @@ const routes = [
   {
     name: 'home',
     path: '/',
-    redirect: () => {
-      return { path: '/main/country/laos' };
-    },
-  },
-  {
-    name: 'main',
-    props: true,
-    path: '/main/:granularity/:value/',
     component: () => import(/* webpackChunkName: "main" */ '../components/TheHome.vue'),
   },
   {

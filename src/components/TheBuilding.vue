@@ -5,9 +5,11 @@
         <BaseTitle>{{ name }} </BaseTitle>
         <div class="flex">
           <BaseBox class="flex flex-1 align-start">
-            <vue-markdown :source="description"></vue-markdown>
+            <v-skeleton-loader v-if="!description"  class="skeleton-article" type="article@4"></v-skeleton-loader>
+            <vue-markdown velse :source="description"></vue-markdown>
           </BaseBox>
           <BaseBox class="flex flex-1 align-center justify-space-around">
+            <v-skeleton-loader v-if="!profileSource"  class="skeleton-article" type="image"></v-skeleton-loader>
             <v-img :src="profileSource" :max-width="profileWidth" :min-width="profileWidth" :max-height="profileHeight" :min-height="profileHeight"/>
           </BaseBox>
         </div>
@@ -111,6 +113,7 @@ export default defineComponent({
   watch: {
     id: {
       async handler() {
+        this.building = {}
         this.building = (
           await MainService.getBuilding(
             this.id
@@ -136,4 +139,10 @@ h1 {
 h2 {
   font-weight: 500;
 }
+
+.skeleton-article {
+  height: 600px;
+  width: 400px;
+}
+
 </style>
