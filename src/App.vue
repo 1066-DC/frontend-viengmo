@@ -6,7 +6,7 @@
           contain
           class="nav-logo"
           position="left"
-          :src="require('@/assets/logo2.jpg')"
+          :src="require('@/assets/viengmo-logo.jpeg')"
           transition="scale-transition"
           @click="goToHome"
         />
