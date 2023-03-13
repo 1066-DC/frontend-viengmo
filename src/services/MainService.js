@@ -7,6 +7,9 @@ export default {
   getBuildingLocations() {
     return Api().get(`buildings?fields[0]=longitude&fields[1]=latitude&fields[2]=name&populate[0]=front`);
   },
+  getArchitecturalElements() {
+    return Api().get(`architectural-elements?populate=*`);
+  },
   getBreadCrumbs(granularity, value, projectType) {
     return Api().get(`data/${granularity}/${value}/${projectType}`);
   },
