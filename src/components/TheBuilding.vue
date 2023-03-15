@@ -2,24 +2,21 @@
   <div class="container mx-auto max-w-screen-xl my-5 flex">
     <div class="w-3/5">
       <ImageGallery :medias-list="mediasList" />
-      <div class="mt-5" v-if="bibliographicReferences">
-        <h2>Bibliographic References</h2> 
-        <ul>
-          <li class="list-disc" v-for="br in bibliographicReferences" v-bind:key="br.id">
-            <span class="font-medium">{{br.attributes.title}}</span>&nbsp;
-            <span v-if="br.attributes.description" >{{br.attributes.description}}</span> 
-            <span v-if="br.attributes.quote" >{{br.attributes.quote}}</span> 
-            <span v-if="br.attributes.website" >{{br.attributes.website}}</span> 
-          </li>
-        </ul>
-      </div>
+      <TitleValue
+        type="bibliographicReferences" 
+        title="Bibliographic References"
+        :value="bibliographicReferences" 
+      />
 
     </div>
     <div class="w-2/5 px-10">
       <v-skeleton-loader v-if="!name"  color="#F7F7F7" class="skeleton-article " type="article@4"></v-skeleton-loader>
       <div v-else>
         
-        <h2 class="mb-3 text-4xl">{{ name }} </h2>
+        <div class="flex items-center mb-3">
+          <h1 class="text-4xl font-bold">{{ name }}</h1>
+          <span class="mx-5 font-normal text-red-700" v-if="useFunction">{{ useFunction }}</span>
+        </div>
         
         <vue-markdown :source="description"></vue-markdown>
         
@@ -27,47 +24,37 @@
         
         <div class="mt-10"> 
           
-          <div v-if="yearOfCompletion">
-            <h2>Year</h2>
-            <span>{{ yearOfCompletion }}</span>
-          </div>
-
-          <div class="mt-5" v-if="surfaceBuilding">
-            <h2>Surface Building</h2>
-            {{surfaceBuilding}}
-          </div>
+          <TitleValue
+            type="uniqueValue" 
+            title="Year of Completion"
+            :value="yearOfCompletion" 
+          />
+          <TitleValue
+            type="uniqueValue" 
+            title="Surface Building"
+            :value="surfaceBuilding" 
+          />
+          <TitleValue
+            type="uniqueValue" 
+            title="Usage Status"
+            :value="usageStatus" 
+          />
+          <TitleValue
+            type="actor" 
+            title="Current Owner"
+            :value="currentOwner" 
+          />
+          <TitleValue
+            type="actors" 
+            title="Construction Companies"
+            :value="constructionCompanies" 
+          />
+          <TitleValue
+            type="actors" 
+            title="Architect"
+            :value="architect" 
+          />
           
-          <div class="mt-5" v-if="usageStatus">
-            <h2>Current Status</h2>
-            <span>{{ usageStatus }}</span>
-          </div>
-
-          <div class="mt-5" v-if="currentOwner">
-            <h2>Current Owner</h2>
-            <span class="font-medium">{{currentOwner.name}}</span>&nbsp;
-            <span>{{currentOwner.description}}</span> 
-          </div>
-          
-
-          <div class="mt-5" v-if="constructionCompagnies">
-            <h2>Construction Compagnies</h2>
-            <ul>
-              <li class="list-disc" v-for="cs in constructionCompagnies" v-bind:key="cs.id">
-                <span class="font-medium">{{cs.attributes.name}}</span>&nbsp;
-                <span>{{cs.attributes.description}}</span> 
-              </li>
-            </ul>
-          </div>
-
-          <div class="mt-5" v-if="architect">
-            <h2>Architect</h2>
-            <ul>
-              <li class="list-disc" v-for="a in architect" v-bind:key="a.id">
-                <span class="font-medium">{{a.attributes.name}}</span>&nbsp;
-                <span>{{a.attributes.description}}</span> 
-              </li>
-            </ul>
-          </div>
 
           <div class="mt-5" v-if="architecturalElements">
             <router-link to="/architectural-elements/">
@@ -116,14 +103,16 @@
 <script>
 import MainService from '@/services/MainService.js';
 import { useMap } from '@/hooks/useMap.js';
-import { formatNumber } from '@/helpers';
+import { formatNumber, getStrapiArray  } from '@/helpers';
 import { defineComponent, toRef } from '@vue/composition-api';
 import ImageGallery from '@/components/ImageGallery.vue';
+import TitleValue from '@/components/TitleValue.vue';
 
 export default defineComponent({
   name: 'TheBuilding',
   components: {
     ImageGallery,
+    TitleValue,
   },
   data() {
     return {
@@ -169,6 +158,9 @@ export default defineComponent({
     usageStatus() {
       return this.building.data ? this.building.data?.attributes?.usage_status?.data?.attributes?.status : "";
     },
+    useFunction() {
+      return this.building.data ? this.building.data?.attributes?.use_function?.data?.attributes?.function : "";
+    },
     currentOwner() {
       return this.building.data ? this.building.data?.attributes?.current_owner?.data?.attributes : "";
     },
@@ -179,40 +171,22 @@ export default defineComponent({
       return this.building.data ? this.building.data?.attributes?.year_of_completion : "";
     },
     architect() {
-      if (this.building.data?.attributes?.architect.data.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.architect.data
+      return this.getArrayFromBuilding("architect");
     },
-    constructionCompagnies() {
-      if (this.building.data?.attributes?.construction_compagnies.data.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.construction_compagnies.data
+    constructionCompanies() {
+      return this.getArrayFromBuilding("construction_companies");
     },
     bibliographicReferences() {
-      if (this.building.data?.attributes?.bibliographic_references.data.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.bibliographic_references.data
+      return this.getArrayFromBuilding("bibliographic_references");
     },
     buildingGroups() {
-      if (this.building.data?.attributes?.building_groups.data.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.building_groups.data
+      return this.getArrayFromBuilding("building_groups");
     },
     historyEvents() {
-      if (this.building.data?.attributes?.history_events.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.history_events.data
+      return this.getArrayFromBuilding("history_events");
     },
     architecturalElements() {
-      if (this.building.data?.attributes?.architectural_elements.data.length == 0)
-        return ""
-      else 
-        return this.building.data?.attributes?.architectural_elements.data
+      return this.getArrayFromBuilding("architectural_elements");
     }
   },
   created() {
@@ -228,6 +202,9 @@ export default defineComponent({
       this.window.height = window.innerHeight;
     },
     formatNumber,
+    getArrayFromBuilding(key) {
+      return getStrapiArray(this.building.data?.attributes?.[key]);
+    }
   },
 
   setup(props) {
@@ -260,14 +237,6 @@ export default defineComponent({
 #map {
   height: 100%;
   width: 100%;
-}
-
-h2 {
-  font-weight: 600;
-}
-
-h2 {
-  font-weight: 500;
 }
 
 .skeleton-article {

@@ -75,6 +75,13 @@ export const getChildGranularity = (granularity) => {
   }
 };
 
+export function getStrapiArray(array) {
+  if (array?.data.length != 0) 
+    return array?.data
+  else 
+    return ""
+}
+
 
 export const DISTRICTS_LAYER = 'districts';
 export const BUILDINGS_LAYER = 'buildings';
