@@ -51,7 +51,7 @@
           />
           <TitleValue
             type="actors" 
-            title="Architect"
+            title="Architects"
             :value="architect" 
           />
           
