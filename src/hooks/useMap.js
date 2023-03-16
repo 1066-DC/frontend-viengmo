@@ -23,7 +23,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
 
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/mapbox/satellite-streets-v11',
+      style: 'mapbox://styles/mapbox/streets-v11',
       center: initialCenter,
       zoom: initialZoom,
     });

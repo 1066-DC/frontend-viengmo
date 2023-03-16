@@ -1,46 +1,118 @@
 <template>
-  <div class="container mx-auto">
-    <BaseBox class="flex flex-column bg-white border-b-2 border-grey-200">
-      <div class="flex flex-column">
-        <BaseTitle>{{ name }} </BaseTitle>
-        <div class="flex">
-          <BaseBox class="flex flex-1 align-start">
-            <v-skeleton-loader v-if="!description"  class="skeleton-article" type="article@4"></v-skeleton-loader>
-            <vue-markdown velse :source="description"></vue-markdown>
-          </BaseBox>
-          <BaseBox class="flex flex-1 align-center justify-space-around">
-            <v-skeleton-loader v-if="!profileSource"  class="skeleton-article" type="image"></v-skeleton-loader>
-            <v-img :src="profileSource" :max-width="profileWidth" :min-width="profileWidth" :max-height="profileHeight" :min-height="profileHeight"/>
-          </BaseBox>
+  <div class="container mx-auto max-w-screen-xl my-5 flex">
+    <div class="w-3/5">
+      <ImageGallery :medias-list="mediasList" />
+      <TitleValue
+        type="bibliographicReferences" 
+        title="Bibliographic References"
+        :value="bibliographicReferences" 
+      />
+
+    </div>
+    <div class="w-2/5 px-10">
+      <v-skeleton-loader v-if="!name"  color="#F7F7F7" class="skeleton-article " type="article@4"></v-skeleton-loader>
+      <div v-else>
+        
+        <div class="flex items-center mb-3">
+          <h1 class="text-4xl font-bold">{{ name }}</h1>
+          <span class="mx-5 font-normal text-red-700" v-if="useFunction">{{ useFunction }}</span>
+        </div>
+        
+        <vue-markdown :source="description"></vue-markdown>
+        
+        <hr v-if="description">
+        
+        <div class="mt-10"> 
+          
+          <TitleValue
+            type="uniqueValue" 
+            title="Year of Completion"
+            :value="yearOfCompletion" 
+          />
+          <TitleValue
+            type="uniqueValue" 
+            title="Surface Building"
+            :value="surfaceBuilding" 
+          />
+          <TitleValue
+            type="uniqueValue" 
+            title="Usage Status"
+            :value="usageStatus" 
+          />
+          <TitleValue
+            type="actor" 
+            title="Current Owner"
+            :value="currentOwner" 
+          />
+          <TitleValue
+            type="actors" 
+            title="Construction Companies"
+            :value="constructionCompanies" 
+          />
+          <TitleValue
+            type="actors" 
+            title="Architects"
+            :value="architect" 
+          />
+          
+
+          <div class="mt-5" v-if="architecturalElements">
+            <router-link to="/architectural-elements/">
+              <h2 class="text-black">Architectural Elements</h2>
+            <div class="flex flex-wrap gap-y-5 gap-x-16 py-5">
+              <div class="flex flex-col" v-for="ae in architecturalElements" v-bind:key="ae.id"> 
+                <div class="rounded">
+                  <v-img
+                    :width="50"
+                    :height="50"
+                    class="rounded"
+                    aspect-ratio="1/1"
+                    cover
+                    :src="ae.attributes.picture_example.data.attributes.formats.thumbnail.url"
+                  >
+                  <template v-slot:placeholder>
+                    <div class="d-flex align-center justify-center fill-height">
+                      <v-progress-circular
+                        color="grey-lighten-4"
+                        indeterminate
+                      ></v-progress-circular>
+                    </div>
+                  </template>
+                </v-img>
+                </div>
+                <div class="text-sm pt-1 text-black">{{ ae.attributes.element }}</div>
+              </div>
+            </div>
+            </router-link>
+          </div>
+
+        </div>        
+      </div>
+
+      <div class="mt-5">
+        <h2> Location </h2>
+        <div class="flex align-start justify-space-around w-full h-96">
+          <div id="map" class="w-full h-96" ></div>
         </div>
       </div>
-    </BaseBox>
-    <BaseBox class="flex bg-white">
-      <BaseBox class="flex flex-1 align-start flex-column">
-        <h1>Localisation </h1>
-        <div class="flex align-start justify-space-around">
-          <div id="map"></div>
-        </div>
-      </BaseBox>
-      <BaseBox class="flex flex-1 align-center justify-space-around">
-        <ImageGallery :medias-list="mediasList" />
-      </BaseBox>
-    </BaseBox>
 
+    </div>
   </div>
 </template>
 
 <script>
 import MainService from '@/services/MainService.js';
 import { useMap } from '@/hooks/useMap.js';
-import { formatNumber } from '@/helpers';
+import { formatNumber, getStrapiArray  } from '@/helpers';
 import { defineComponent, toRef } from '@vue/composition-api';
 import ImageGallery from '@/components/ImageGallery.vue';
+import TitleValue from '@/components/TitleValue.vue';
 
 export default defineComponent({
   name: 'TheBuilding',
   components: {
     ImageGallery,
+    TitleValue,
   },
   data() {
     return {
@@ -73,15 +145,48 @@ export default defineComponent({
       return this.building.data?.attributes?.front?.data?.attributes?.formats?.small?.height ?? '';  
     },
     mediasList() {
-      return this.building.data ? this.building.data.attributes.medias.data.map( x => ({
-        src: x.attributes.formats.medium.url
+      return this.building.data ? this.building.data?.attributes?.medias?.data.map( x => ({
+        src: x.attributes?.formats?.medium?.url
       })) : []; 
     },
     description() {
-      return this.building.data ? this.building.data.attributes.description : "";
+      return this.building.data ? this.building.data?.attributes?.description : "";
     },
     name() {
-      return this.building.data ? this.building.data.attributes.name : "";
+      return this.building.data ? this.building.data?.attributes?.name : "";
+    },
+    usageStatus() {
+      return this.building.data ? this.building.data?.attributes?.usage_status?.data?.attributes?.status : "";
+    },
+    useFunction() {
+      return this.building.data ? this.building.data?.attributes?.use_function?.data?.attributes?.function : "";
+    },
+    currentOwner() {
+      return this.building.data ? this.building.data?.attributes?.current_owner?.data?.attributes : "";
+    },
+    surfaceBuilding() {
+      return this.building.data ? this.building.data?.attributes?.surface_building?.data : "";
+    },
+    yearOfCompletion() {
+      return this.building.data ? this.building.data?.attributes?.year_of_completion : "";
+    },
+    architect() {
+      return this.getArrayFromBuilding("architect");
+    },
+    constructionCompanies() {
+      return this.getArrayFromBuilding("construction_companies");
+    },
+    bibliographicReferences() {
+      return this.getArrayFromBuilding("bibliographic_references");
+    },
+    buildingGroups() {
+      return this.getArrayFromBuilding("building_groups");
+    },
+    historyEvents() {
+      return this.getArrayFromBuilding("history_events");
+    },
+    architecturalElements() {
+      return this.getArrayFromBuilding("architectural_elements");
     }
   },
   created() {
@@ -97,6 +202,9 @@ export default defineComponent({
       this.window.height = window.innerHeight;
     },
     formatNumber,
+    getArrayFromBuilding(key) {
+      return getStrapiArray(this.building.data?.attributes?.[key]);
+    }
   },
 
   setup(props) {
@@ -105,7 +213,6 @@ export default defineComponent({
       toRef(props, 'id'),
       12,
     );
-
     return {
       mapPromise,
     };
@@ -128,16 +235,8 @@ export default defineComponent({
 
 <style>
 #map {
-  height: 450px;
-  width: 450px;
-}
-
-h1 {
-  font-weight: 600;
-}
-
-h2 {
-  font-weight: 500;
+  height: 100%;
+  width: 100%;
 }
 
 .skeleton-article {

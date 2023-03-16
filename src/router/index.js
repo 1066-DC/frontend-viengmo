@@ -16,6 +16,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "main" */ '../components/TheBuilding.vue'),
   },
   {
+    path: '/architectural-elements',
+    props: true,
+    name: 'Architectural Elements',
+    component: () => import(/* webpackChunkName: "main" */ '../components/ArchitecturalElements.vue'),
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import(/* webpackChunkName: "main" */ '../components/TheSettings.vue'),

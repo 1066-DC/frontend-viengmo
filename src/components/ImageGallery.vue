@@ -1,6 +1,5 @@
 <template>
   <div class="image-gallery">
-    <h1>Pictures </h1>
     <v-carousel v-model="carouselIdx" v-if="mediasList.length">
       <v-carousel-item v-for="(media, idx) in mediasList" :key="idx" eager>
         <div class="carousel-img-container">
@@ -12,64 +11,8 @@
         </div>
       </v-carousel-item>
     </v-carousel>
-
-    <div class="text-center" v-if="mediasList.length">
-      <v-dialog v-model="galleryDialog" width="2000" scrollable>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            tile
-            color="secondary"
-            v-bind="attrs"
-            v-on="on"
-            class="ma-4"
-          >
-            {{ $t('gallery') }}
-          </v-btn>
-        </template>
-
-        <v-card>
-          <v-card-title>
-            <v-spacer></v-spacer>
-            <v-btn icon>
-              <v-icon
-                class="heading grey--text text--darken-4"
-                @click="galleryDialog = false"
-                >close</v-icon
-              >
-            </v-btn>
-          </v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <viewer
-              :images="mediasList"
-              :options="options"
-              @inited="inited"
-              class="images clearfix"
-            >
-              <template #default="scope">
-                <img
-                  v-for="(image, idx) in scope.images"
-                  :src="image.src"
-                  :key="idx"
-                  :alt="image.title"
-                  class="image"
-                />
-              </template>
-            </viewer>
-            <v-btn
-              color="primary"
-              text
-              @click="getPictures()"
-              v-if="imageCount > mediasList.length"
-            >
-              {{ $t('more') }}
-            </v-btn>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
     <div v-else class="no-picture-container">
-      <v-img class="no-picture-image" :src="require('@/assets/logo2.jpg')" />
+      <v-img class="no-picture-image" :src="require('@/assets/viengmo-logo-notext.jpg')" />
     </div>
   </div>
 </template>
