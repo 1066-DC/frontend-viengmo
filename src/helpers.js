@@ -75,11 +75,15 @@ export const getChildGranularity = (granularity) => {
   }
 };
 
-export function getStrapiArray(array) {
-  if (array?.data.length != 0) 
-    return array?.data
-  else 
-    return ""
+export function getChildProperties(element, key) {
+  if (element.data?.attributes?.[key]?.data.length != 0)
+    return element.data?.attributes?.[key]?.data;
+  else
+    return [];
+}
+
+export function getChildProperty(element, key) {
+  return element.data ? element.data?.attributes?.[key]?.data?.attributes?.status : "";
 }
 
 
