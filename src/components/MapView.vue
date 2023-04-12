@@ -60,11 +60,11 @@ import {
   nextTick,
   toRef,
   watch,
+  ref,
 } from '@vue/composition-api';
 // import MainService from '@/services/MainService.js';
 import mapboxgl from 'mapbox-gl';
 import BuildingPopup from '@/components/BuildingPopup.vue';
-import router from '@/router';
 import { formatNumber } from '@/helpers';
 import { useMap } from '@/hooks/useMap.js';
 import { capitalizeFirst } from '@/helpers';
@@ -89,19 +89,11 @@ export default defineComponent({
   },
   methods: {
     formatNumber,
-    goToAnalytics() {
-      router.push({
-        name: 'building',
-        params: {
-          id: 1,
-        },
-      });
-    },
   },
   setup(props) {
     const { mapPromise } = useMap(
       toRef(props, 'buildings'),
-      null,
+      ref(null),
       12,
     );
 

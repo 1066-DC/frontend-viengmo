@@ -2,10 +2,10 @@ import Api from "@/services/Api";
 
 export default {
   getBuilding(id) {
-    return Api().get(`buildings/${id}?populate[0]=use_function,usage_status,medias,architectural_elements.picture_example,history_events,construction_companies,architect,current_owner,bibliographic_references,building_groups&populate[1]=front`);
+    return Api().get(`buildings/${id}?populate[0]=use_function,usage_status,medias,architectural_elements.picture_example,history_events,construction_companies,architect,current_owner,bibliographic_references,building_groups&populate[1]=front`)
   },
   getBuildingLocations() {
-    return Api().get(`buildings?fields[0]=longitude&fields[1]=latitude&fields[2]=name&populate[0]=front`);
+    return Api().get(`buildings?fields[0]=location&fields[1]=name&populate[0]=front`);
   },
   getArchitecturalElements() {
     return Api().get(`architectural-elements?populate=*`);

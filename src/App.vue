@@ -73,8 +73,8 @@ export default {
   async mounted() {
     this.buildings = (await MainService.getBuildingLocations()).data.data.map(x => ({
       id: x.id,
-      longitude: x.attributes.longitude,
-      latitude: x.attributes.latitude,
+      longitude: x.attributes.location ? JSON.parse(x.attributes.location).lng: '',
+      latitude: x.attributes.location ? JSON.parse(x.attributes.location).lat : '',
       name: x.attributes.name,
       thumbnail: x.attributes.front.data.attributes.formats.thumbnail.url
     }));

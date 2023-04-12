@@ -190,12 +190,18 @@ export default defineComponent({
   watch: {
     id: {
       async handler() {
-        this.building = {};
-        this.building = (
+        const building = (
           await MainService.getBuilding(
             this.id
           )
         ).data;
+        building.data.attributes = {
+          ...building.data.attributes,
+          longitude: building.data.attributes.location ? JSON.parse(building.data.attributes.location).lng : '',
+          latitude: building.data.attributes.location ? JSON.parse(building.data.attributes.location).lat : '',
+        }
+
+        this.building = building;
       },
       immediate: true,
     },

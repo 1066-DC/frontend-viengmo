@@ -68,7 +68,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
           const building = e.features[0].properties;
           router.push({
             name: 'building',
-            params: { id: building.id },
+            params: { id: String(building.id) },
           }).catch(() => { });
           const coordinates = e.lngLat.wrap();
           center.value = [coordinates.lng, coordinates.lat];
@@ -97,7 +97,7 @@ export const useMap = (buildings, building_id, initialZoom) => {
     if (!mapPromise.value) {
       return;
     }
-    const filterValue = Number(building_id.value);
+    const filterValue = Number(building_id?.value);
 
     mapPromise.value.then((map) => {
       map.setPaintProperty(BUILDINGS_LAYER, 'circle-color', [
