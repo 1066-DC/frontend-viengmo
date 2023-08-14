@@ -76,7 +76,7 @@ export default {
       longitude: x.attributes.location ? JSON.parse(x.attributes.location).lng: '',
       latitude: x.attributes.location ? JSON.parse(x.attributes.location).lat : '',
       name: x.attributes.name,
-      thumbnail: x.attributes.front.data.attributes.formats.thumbnail.url
+      thumbnail: x.attributes.front.data?.attributes.formats.thumbnail.url
     }));
 
     this.buildings.forEach(b => {

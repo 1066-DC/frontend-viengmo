@@ -115,7 +115,7 @@ export default defineComponent({
       return this.building.data?.attributes?.front?.data?.attributes?.formats?.thumbnail?.height ?? '';
     },
     mediasList() {
-      return this.building.data ? this.building.data?.attributes?.medias?.data.map(x => ({
+      return this.building.data?.attributes?.medias?.data ? this.building.data?.attributes?.medias?.data.map(x => ({
         src: x.attributes?.formats?.medium?.url
       })) : [];
     },
